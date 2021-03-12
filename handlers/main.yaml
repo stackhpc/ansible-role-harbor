@@ -1,13 +1,13 @@
 ---
 - name: start harbor
-  docker_service:
+  docker_compose:
     project_src: "{{ harbor_install_dir }}/harbor"
     files: "{{ harbor_docker_compose_files }}"
     state: present
     timeout: 30
 
 - name: stop harbor
-  docker_service:
+  docker_compose:
     project_src: "{{ harbor_install_dir }}/harbor"
     files: "{{ harbor_docker_compose_files }}"
     state: absent
