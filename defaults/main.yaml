@@ -1,6 +1,6 @@
 ---
 harbor_release: 2.2.0
-harbor_version: 2.2.0
+harbor_version: "{{ harbor_release }}"
 harbor_url: "https://storage.googleapis.com/harbor-releases/release-{{ harbor_release }}/harbor-offline-installer-v{{ harbor_version }}.tgz"
 
 harbor_installer_extra_args:
@@ -44,7 +44,9 @@ harbor_exposed_https_port: 443
 
 # If you have Harbor running on say "myregistry.company.com", that's what you should have as harbor_hostname
 harbor_hostname: "{{ hostvars[inventory_hostname]['ansible_hotname'] }}"
-harbor_datadir: "/data"
+harbor_data_dir: "/data"
+harbor_data_fstype: "ext4"
+harbor_data_dev:
 harbor_certificate: "/etc/letsencrypt/live/{{ harbor_hostname }}/fullchain.pem"
 harbor_private_key: "/etc/letsencrypt/live/{{ harbor_hostname }}/privkey.pem"
 harbor_api_port: "{% if harbor_url_protocol == 'http' %}{{harbor_exposed_http_port}}{% else %}{{harbor_exposed_https_port}}{% endif %}"
@@ -66,3 +68,4 @@ harbor_users: []
 #    sysadmin_flag: false
 
 harbor_installer_with: "{% for e in harbor_extras %} {{ '--with-%s'|format(e) }} {% endfor %}"
+harbor_validate_certs: true
