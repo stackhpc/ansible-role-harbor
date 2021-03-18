@@ -71,6 +71,7 @@
     block: "{{ harbor_yml | to_nice_yaml }}"
     path: "{{ harbor_install_dir }}/harbor/harbor.yml"
   become: yes
+  register: config
 
 - name: Running Harbor installer...
   command: "./install.sh {{ harbor_installer_with }} {{ harbor_installer_extra_args }}"
@@ -78,6 +79,7 @@
     chdir: "{{ harbor_install_dir }}/harbor"
     creates: '{{ harbor_install_dir }}/harbor/harbor_install_log.txt'
   become: yes
+  when: config is changed
 
 - name: Creating projects
   uri:
