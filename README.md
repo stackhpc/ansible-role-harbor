@@ -84,15 +84,19 @@ harbor_users:
   vars:
     harbor_projects:
       - project_name: test
-        is_public: "true"
-        content_trust: "false"
-        prevent_vul: "false"
-        severity: "high"
-        auto_scan: "true"
+        is_public: true
+        content_trust: false
+        prevent_vul: "false
+        severity: high
+        auto_scan: true
     harbor_users:
       - username: dev
         email: dev@test.com
         sysadmin_flag: false
+    harbor_roles:
+      - username: dev
+        project_name: test
+        role_id: 2
   tasks:
     - include_role: name=stackhpc.harbor
 ```

@@ -79,7 +79,7 @@
     creates: '{{ harbor_install_dir }}/harbor/harbor_install_log.txt'
   become: yes
 
-- name: "creating projects..."
+- name: Creating projects
   uri:
     url: "{{ harbor_api_url }}/projects"
     method: post
@@ -97,7 +97,7 @@
   register: response
   changed_when: response.status == 201
 
-- name: "Creating users..."
+- name: Creating users
   uri:
     url: "{{ harbor_api_url }}/users"
     method: POST
@@ -112,5 +112,40 @@
     body: "{{ lookup('template', 'templates/create_user.j2') }}"
     validate_certs: "{{ harbor_validate_certs | bool }}"
   with_items: "{{ harbor_users }}"
+  register: response
+  changed_when: response.status == 201
+
+- name: Get projects
+  uri:
+    url: "{{ harbor_api_url }}/projects/{{ item.project_name }}"
+    method: GET
+    user: "admin"
+    password: "{{ harbor_admin_password }}"
+    status_code:
+      - 200
+    force_basic_auth: yes
+    validate_certs: "{{ harbor_validate_certs | bool }}"
+  with_items: "{{ harbor_roles }}"
+  register: projects
+
+- name: Creating project roles
+  vars:
+    role: "{{ item.item }}"
+  uri:
+    url: "{{ harbor_api_url }}/projects/{{ item.json.project_id }}/members"
+    method: POST
+    user: "admin"
+    password: "{{ harbor_admin_password }}"
+    status_code:
+      - 201
+      - 409 # already created
+    body_format: json
+    force_basic_auth: yes
+    return_content: yes
+    body: "{{ lookup('template', 'templates/create_role.j2') }}"
+    validate_certs: "{{ harbor_validate_certs | bool }}"
+  loop: "{{ projects.results }}"
+  loop_control:
+    label: "{{ item.item }}"
   register: response
   changed_when: response.status == 201
