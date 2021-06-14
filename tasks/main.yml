@@ -63,7 +63,7 @@
 
 - name: "Combine harbor config with template"
   set_fact:
-    harbor_yml: "{{ harbor_yml_tmpl.content | b64decode | from_yaml | combine(harbor_config, recursive=True) |  combine(harbor_extra_config, recursive=True) }}"
+    harbor_yml: "{{ harbor_yml_tmpl.content | b64decode | from_yaml | combine(harbor_config, recursive=True) |  combine(harbor_extra_config, recursive=True) | dict2items | rejectattr('key', 'in', harbor_config_reject) | items2dict }}"
 
 - name: "Write combined config to harbor.yml"
   blockinfile:

@@ -30,6 +30,7 @@ harbor_config:
     password: "{{ harbor_database_password }}"
 
 harbor_database_password: "root123"
+harbor_config_reject: []
 
 # This overrides harbor template and harbor_config.
 # See additional config options here: https://github.com/goharbor/harbor/blob/master/make/harbor.yml.tmpl
