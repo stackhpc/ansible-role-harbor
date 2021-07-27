@@ -1,4 +1,8 @@
 ---
+harbor_dependencies:
+  - docker.io
+  - python3-pip
+
 harbor_release: 2.2.0
 harbor_version: "{{ harbor_release }}"
 harbor_url: "https://storage.googleapis.com/harbor-releases/release-{{ harbor_release }}/harbor-offline-installer-v{{ harbor_version }}.tgz"
