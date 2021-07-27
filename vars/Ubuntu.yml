@@ -1,3 +1,0 @@
-harbor_dependencies:
-  - docker.io
-  - python3-pip
