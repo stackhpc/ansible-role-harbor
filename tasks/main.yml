@@ -27,7 +27,7 @@
   filesystem:
     fstype: "{{ harbor_data_fstype }}"
     dev: "{{ harbor_data_dev }}"
-  when: harbor_data_dev != ""
+  when: harbor_data_dev is defined and harbor_data_dev != ""
   become: yes
 
 - name: Mount disk for data dir
@@ -36,7 +36,7 @@
     src: "{{ harbor_data_dev }}"
     fstype: "{{ harbor_data_fstype }}"
     state: mounted
-  when: harbor_data_dev != ""
+  when: harbor_data_dev is defined and harbor_data_dev != ""
   become: yes
 
 - name: "Downloading Harbor {{ harbor_version }} (offline installer)"
@@ -73,13 +73,21 @@
   become: yes
   register: config
 
+- name: "Add service Overrides"
+  template:
+    src: docker-compose.override.yml.j2
+    dest: "{{ harbor_install_dir }}/harbor/docker-compose.override.yml"
+  become: yes
+  when: harbor_services_overrides is defined and harbor_services_overrides != ''
+  register: overrides
+
 - name: Running Harbor installer...
   command: "./install.sh {{ harbor_installer_with }} {{ harbor_installer_extra_args }}"
   args:
     chdir: "{{ harbor_install_dir }}/harbor"
     creates: '{{ harbor_install_dir }}/harbor/harbor_install_log.txt'
   become: yes
-  when: config is changed
+  when: config is changed or overrides is changed
 
 - name: Creating projects
   uri:

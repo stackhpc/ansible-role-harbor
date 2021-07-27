@@ -1,0 +1,3 @@
+version: '2.3'
+services:
+  {{ harbor_services_overrides | to_nice_yaml(indent=2) | indent(2) }}
